@@ -38,7 +38,7 @@ jobs:
                   "pattern": "${{ steps.get_package_name_and_version.outputs.PACKAGE_NAME }}@(.+)",
                   "flags": "gu"
                 }
-              },
+              }
             }
       - name: debug
         run: echo '${{ toJSON(steps.build_changelog.outputs) }}'
