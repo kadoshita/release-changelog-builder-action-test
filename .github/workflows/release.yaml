@@ -37,8 +37,13 @@ jobs:
                 "filter": {
                   "pattern": "${{ steps.get_package_name_and_version.outputs.PACKAGE_NAME }}@(.+)",
                   "flags": "gu"
+                },
+                "transformer": {
+                  "pattern": "${{ steps.get_package_name_and_version.outputs.PACKAGE_NAME }}@(.+)",
+                  "flags": "gu",
+                  "replace": "$1"
                 }
-              },
+              }
             }
       - name: debug
         run: echo '${{ toJSON(steps.build_changelog.outputs) }}'
