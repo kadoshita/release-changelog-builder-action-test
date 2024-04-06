@@ -36,9 +36,10 @@ jobs:
                 "method": "semver",
                 "filter": {
                   "pattern": "${{ steps.get_package_name_and_version.outputs.PACKAGE_NAME }}@(.+)",
+                  "target": "$1",
                   "flags": "gu"
                 }
-              },
+              }
             }
       - name: debug
         run: echo '${{ toJSON(steps.build_changelog.outputs) }}'
