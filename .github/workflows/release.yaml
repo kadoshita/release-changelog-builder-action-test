@@ -12,10 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Get package name and version
         id: get_package_name_and_version
         run: |
@@ -48,7 +50,7 @@ jobs:
                 "transformer": {
                   "pattern": "${{ steps.get_package_name_and_version.outputs.PACKAGE_NAME }}@(.+)",
                   "flags": "gu",
-                  "replace": "$1"
+                  "target": "$1"
                 }
               }
             }
@@ -59,10 +61,10 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { data: commentData } = await github.issues.createComment({
+            const { data: commentData } = await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: steps.build_changelog.outputs.changelog
+              body: `${${{ steps.build_changelog.outputs.changelog }}}`
             });
             console.log('Comment created:', commentData.html_url);
