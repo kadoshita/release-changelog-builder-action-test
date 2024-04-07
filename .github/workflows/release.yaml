@@ -30,6 +30,12 @@ jobs:
           toTag: ${{ github.event.pull_request.base.sha }}
           configurationJson: |
             {
+              "categories": [
+                {
+                  "title": "Update",
+                  "labels": ["${{ steps.get_package_name_and_version.outputs.PACKAGE_NAME }}"]
+                }
+              ],
               "ignore_labels": [
                 "release"
               ],
@@ -48,3 +54,15 @@ jobs:
             }
       - name: debug
         run: echo '${{ toJSON(steps.build_changelog.outputs) }}'
+      - name: Add comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { data: commentData } = await github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: steps.build_changelog.outputs.changelog
+            });
+            console.log('Comment created:', commentData.html_url);
